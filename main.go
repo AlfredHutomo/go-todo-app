@@ -10,17 +10,17 @@ import (
 )
 
 func main() {
-    // INITIATE DB
-    database.Init()
+	// INITIATE DB
+	database.Init()
 
-    // RUN MIGRATION
-    migration.RunMigration()
+	// RUN MIGRATION
+	migration.RunMigration()
 
-    app := fiber.New()
+	app := fiber.New()
 
-    // Initiate Route from routes
-    routes.RouteInit(app)
-    routes.TodoRoutes(app)
+	// Initiate Route from routes
+	routes.RouteInit(app)
+	routes.TodoRoutes(app)
 
-    log.Fatal(app.Listen("localhost:8080"))
+	log.Fatal(app.Listen("localhost:8080"))
 }

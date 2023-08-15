@@ -17,7 +17,7 @@ func Init() {
 	DB = db
 
 	if err != nil {
-	  panic("failed to connect database")
+		panic("failed to connect database")
 	}
 
 	fmt.Println("Connection Opened to Database")

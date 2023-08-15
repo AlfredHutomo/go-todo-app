@@ -47,7 +47,7 @@ func CreateTodoHandler(ctx *fiber.Ctx) error {
 	newTodo := entity.Todo{
 		Title:       todo.Title,
 		Description: todo.Description,
-		Completed: false,
+		Completed:   false,
 	}
 
 	result := database.DB.Create(&newTodo)
@@ -61,7 +61,7 @@ func CreateTodoHandler(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(fiber.Map{
 		"message": "success",
-		"data": newTodo,
+		"data":    newTodo,
 	})
 }
 
@@ -110,7 +110,7 @@ func UpdateTodoHandler(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(fiber.Map{
 		"message": "success",
-		"data": todoEntity,
+		"data":    todoEntity,
 	})
 }
 
@@ -141,7 +141,7 @@ func CompleteTodoHandler(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(fiber.Map{
 		"message": "success",
-		"data": todoEntity,
+		"data":    todoEntity,
 	})
 }
 
