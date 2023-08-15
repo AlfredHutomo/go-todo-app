@@ -25,6 +25,6 @@ This is a simple TODO backend app using Go and Fiber. It uses Gorm as ORM and Sw
 
 ### Swagger
 
-```bash
-    http://localhost:3000/swagger/index.html
-```
+The swagger documentation can be found at
+
+`http://localhost:3000/swagger/index.html`
