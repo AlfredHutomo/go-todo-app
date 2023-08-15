@@ -10,6 +10,7 @@ func TodoRoutes(app *fiber.App) {
 
 	todo.Get("/", handler.GetTodoHandler)
 	todo.Post("/", handler.CreateTodoHandler)
-	todo.Put("/:id", handler.UpdateTodoHandler)
+	todo.Patch("/:id", handler.UpdateTodoHandler)
+	todo.Put("/:id/complete", handler.CompleteTodoHandler)
 	todo.Delete("/:id", handler.DeleteTodoHandler)
 }

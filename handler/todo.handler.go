@@ -13,6 +13,14 @@ import (
 
 var validate = validator.New()
 
+// GetTodo godoc
+// @Summary      Get All Todo's
+// @Description  get string by ID
+// @Tags         todo
+// @Produce      json
+// @Success      200  {object}  []entity.Todo
+// @Failure      400  {object}  fiber.Error
+// @Router       /todo [get]
 func GetTodoHandler(ctx *fiber.Ctx) error {
 	var todo []entity.Todo
 
@@ -20,6 +28,7 @@ func GetTodoHandler(ctx *fiber.Ctx) error {
 
 	if result.Error != nil {
 		log.Println(result.Error)
+		return fiber.NewError(400, "failed")
 	}
 
 	// Other way to extract error
@@ -31,6 +40,16 @@ func GetTodoHandler(ctx *fiber.Ctx) error {
 	return ctx.JSON(todo)
 }
 
+// CreateTodo godoc
+// @Summary      Create a new Todo
+// @Description  Create a new Todo with the input payload
+// @Tags         todo
+// @Accept       json
+// @Produce      json
+// @Param        request body request.CreateTodoRequest true "Payload for creating a new todo"
+// @Success      200  {object}  entity.Todo
+// @Failure      400  {object}  fiber.Error
+// @Router       /todo [post]
 func CreateTodoHandler(ctx *fiber.Ctx) error {
 	todo := new(request.CreateTodoRequest)
 
@@ -39,9 +58,7 @@ func CreateTodoHandler(ctx *fiber.Ctx) error {
 	}
 
 	if errValidate := validate.Struct(todo); errValidate != nil {
-		return ctx.Status(400).JSON(fiber.Map{
-			"message": errValidate.Error(),
-		})
+		return fiber.NewError(fiber.ErrBadRequest.Code, "failed")
 	}
 
 	newTodo := entity.Todo{
@@ -54,9 +71,7 @@ func CreateTodoHandler(ctx *fiber.Ctx) error {
 
 	if result.Error != nil {
 		log.Println(result.Error)
-		return ctx.Status(400).JSON(fiber.Map{
-			"message": "failed",
-		})
+		return fiber.NewError(fiber.ErrBadRequest.Code, "failed")
 	}
 
 	return ctx.JSON(fiber.Map{
@@ -65,6 +80,17 @@ func CreateTodoHandler(ctx *fiber.Ctx) error {
 	})
 }
 
+// UpdateTodo godoc
+// @Summary      Update a Todo
+// @Description  Update a Todo with params id and input payload
+// @Tags         todo
+// @Accept       json
+// @Produce      json
+// @Param        id path string true "Todo ID"
+// @Param        request body request.UpdateTodoRequest true "Payload for creating a new todo"
+// @Success      200  {object}  entity.Todo
+// @Failure      400  {object}  fiber.Error
+// @Router       /todo/:id [patch]
 func UpdateTodoHandler(ctx *fiber.Ctx) error {
 	todoId := ctx.Params("id")
 
@@ -75,9 +101,7 @@ func UpdateTodoHandler(ctx *fiber.Ctx) error {
 	}
 
 	if errValidate := validate.Struct(todo); errValidate != nil {
-		return ctx.Status(400).JSON(fiber.Map{
-			"message": errValidate.Error(),
-		})
+		return fiber.NewError(fiber.ErrBadRequest.Code, errValidate.Error())
 	}
 
 	var todoEntity entity.Todo
@@ -86,9 +110,7 @@ func UpdateTodoHandler(ctx *fiber.Ctx) error {
 
 	if result.Error != nil {
 		log.Println(result.Error)
-		return ctx.Status(400).JSON(fiber.Map{
-			"message": "failed",
-		})
+		return fiber.NewError(fiber.ErrBadRequest.Code, "failed")
 	}
 
 	if todo.Title != "" {
@@ -103,9 +125,7 @@ func UpdateTodoHandler(ctx *fiber.Ctx) error {
 
 	if dbError != nil {
 		log.Println(dbError)
-		return ctx.Status(400).JSON(fiber.Map{
-			"message": "failed",
-		})
+		return fiber.NewError(fiber.ErrBadRequest.Code, "failed")
 	}
 
 	return ctx.JSON(fiber.Map{
@@ -114,6 +134,16 @@ func UpdateTodoHandler(ctx *fiber.Ctx) error {
 	})
 }
 
+// CompleteTodo godoc
+// @Summary      Complete a Todo
+// @Description  Complete a Todo with params id
+// @Tags         todo
+// @Accept       json
+// @Produce      json
+// @Param        id path string true "Todo ID"
+// @Success      200  {object}  entity.Todo
+// @Failure      400  {object}  fiber.Error
+// @Router       /todo/:id/complete [post]
 func CompleteTodoHandler(ctx *fiber.Ctx) error {
 	todoId := ctx.Params("id")
 
@@ -123,9 +153,7 @@ func CompleteTodoHandler(ctx *fiber.Ctx) error {
 
 	if result.Error != nil {
 		log.Println(result.Error)
-		return ctx.Status(400).JSON(fiber.Map{
-			"message": "failed",
-		})
+		return fiber.NewError(fiber.ErrBadRequest.Code, "failed")
 	}
 
 	todoEntity.Completed = true
@@ -134,9 +162,7 @@ func CompleteTodoHandler(ctx *fiber.Ctx) error {
 
 	if dbError != nil {
 		log.Println(dbError)
-		return ctx.Status(400).JSON(fiber.Map{
-			"message": "failed",
-		})
+		return fiber.NewError(fiber.ErrBadRequest.Code, "failed")
 	}
 
 	return ctx.JSON(fiber.Map{
@@ -145,6 +171,16 @@ func CompleteTodoHandler(ctx *fiber.Ctx) error {
 	})
 }
 
+// DeleteTodo godoc
+// @Summary      Delete a Todo
+// @Description  Delete a Todo with params id
+// @Tags         todo
+// @Accept       json
+// @Produce      json
+// @Param        id path string true "Todo ID"
+// @Success      200  {object}  string
+// @Failure      400  {object}  fiber.Error
+// @Router       /todo/:id [delete]
 func DeleteTodoHandler(ctx *fiber.Ctx) error {
 	todoId := ctx.Params("id")
 
@@ -154,21 +190,15 @@ func DeleteTodoHandler(ctx *fiber.Ctx) error {
 
 	if result.Error != nil {
 		log.Println(result.Error)
-		return ctx.Status(400).JSON(fiber.Map{
-			"message": "failed",
-		})
+		return fiber.NewError(fiber.ErrBadRequest.Code, "failed")
 	}
 
 	dbError := database.DB.Delete(&todo).Error
 
 	if dbError != nil {
 		log.Println(dbError)
-		return ctx.Status(400).JSON(fiber.Map{
-			"message": "failed",
-		})
+		return fiber.NewError(fiber.ErrBadRequest.Code, "failed")
 	}
 
-	return ctx.JSON(fiber.Map{
-		"message": "success",
-	})
+	return ctx.Status(200).SendString("success")
 }
