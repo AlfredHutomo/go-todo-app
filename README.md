@@ -14,7 +14,7 @@ This is a simple TODO backend app using Go and Fiber. It uses Gorm as ORM and Sw
 ### Installation
 
 ```bash
-    go get
+    go install
 ```
 
 ### Run
